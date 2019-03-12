@@ -47,3 +47,14 @@ exports.login = (req, res) => {
 		res.status(422).send(err.errors);
 	});
 };
+
+exports.list = (req, res) => {
+	
+	User.find({}, 'name id')
+	.then(users => {
+		res.status(200).send(users);
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+};
