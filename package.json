@@ -2,8 +2,9 @@
   "name": "factly",
   "version": "1.0.0",
   "description": "Nodejs Vue and MongoDB based blogging system",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/mdedakiya/node-vue-blog/issues"
   },
-  "homepage": "https://github.com/mdedakiya/node-vue-blog#readme"
+  "homepage": "https://github.com/mdedakiya/node-vue-blog#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.0",
+    "mongoose": "^5.4.19"
+  }
 }
