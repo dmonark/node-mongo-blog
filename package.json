@@ -1,0 +1,19 @@
+{
+  "name": "factly",
+  "version": "1.0.0",
+  "description": "Nodejs Vue and MongoDB based blogging system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdedakiya/node-vue-blog.git"
+  },
+  "author": "Monark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mdedakiya/node-vue-blog/issues"
+  },
+  "homepage": "https://github.com/mdedakiya/node-vue-blog#readme"
+}
