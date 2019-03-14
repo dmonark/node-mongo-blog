@@ -35,7 +35,11 @@ var PostSchema = new Schema({
 	},
 	comments: {
 		type: Array,
-		default : []
+		default: []
+	},
+	likes: {
+		type: Array,
+		default: []
 	}
 });
 

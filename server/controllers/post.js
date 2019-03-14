@@ -25,7 +25,7 @@ exports.list = (req, res) => {
 	if(req.query.author)
 		filterList['authorId'] = req.query.author
 	
-	Post.find(filterList, 'id title desc category')
+	Post.find(filterList, 'id title desc category likes')
 	.then(posts => {
 		res.status(200).send(posts);
 	})
@@ -92,6 +92,71 @@ exports.comment = (req, res) => {
 				commentsCopy[j]['author'] = users.find(user => user._id == commentsCopy[j].userId)
 			}
 			res.status(200).send(commentsCopy);
+		})
+		.catch(err => {
+			res.status(422).send(err.errors);
+		});		
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+};
+
+exports.like = (req, res) => {
+	Post.update({
+		'_id': req.params.id
+	},{
+		$push: {
+			likes: {
+				"userId": req.decoded.uid,
+				"createdAt": Date.now()
+			}
+		}
+	})
+	.then(like => {
+		res.status(201).send(like);
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+};
+
+exports.unlike = (req, res) => {
+	Post.update({
+		'_id': req.params.id
+	},{
+		$pull: {
+			likes: {
+				"userId": req.decoded.uid,
+			}
+		}
+	})
+	.then(like => {
+		res.status(200).send(like);
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+};
+
+exports.likeList = (req, res) => {
+	Post.findOne({
+		'_id': req.params.id
+	}, 'likes')
+	.then(data => {
+		var likesCopy = data.likes
+		userList = []
+		for(var i = 0; i < likesCopy.length; i++){
+			userList.push(likesCopy[i].userId)
+		}
+		User.find({
+			'_id': { $in : userList}
+		}, 'name')
+		.then(users => {
+			for(var j = 0; j < likesCopy.length; j++){
+				likesCopy[j]['author'] = users[j]
+			}
+			res.status(200).send(likesCopy);
 		})
 		.catch(err => {
 			res.status(422).send(err.errors);
