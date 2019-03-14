@@ -21,7 +21,7 @@ exports.login = (req, res) => {
 	User.findOne({
 		email: req.body.email,
 		password: req.body.password,
-	})
+	}, 'id name bio')
 	.then(user => {
 		if(!user){
 			res.status(422).send({

@@ -13,4 +13,7 @@ module.exports = (app) => {
 	app.post('/api/blog', authChecker.checkToken, blogController.create);
 	app.get('/api/blog', blogController.list);
 	app.get('/api/blog/:id', blogController.index);
+	
+	app.post('/api/blog/:id/comment', authChecker.checkToken, blogController.createComment);
+	app.get('/api/blog/:id/comment', blogController.comment);
 };

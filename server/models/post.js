@@ -32,6 +32,10 @@ var PostSchema = new Schema({
 		require: true,
 		trim: true,
 		max: 200,
+	},
+	comments: {
+		type: Array,
+		default : []
 	}
 });
 
