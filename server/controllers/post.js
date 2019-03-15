@@ -6,7 +6,7 @@ exports.create = (req, res) => {
 		title: req.body.title,
 		desc: req.body.desc,
 		category: req.body.category,
-		authorId: req.decoded.uid,
+		author: req.decoded.uid,
 		createdAt: Date.now()
 	})
 	.then(post => {
@@ -17,17 +17,17 @@ exports.create = (req, res) => {
 	});
 };
 
-
 exports.list = (req, res) => {
 	var filterList = {}
 	if(req.query.category)
 		filterList['category'] = req.query.category
 	if(req.query.author)
-		filterList['authorId'] = req.query.author
+		filterList['author'] = req.query.author
 	
-	Post.find(filterList, 'id title desc category likes')
+	Post.find(filterList, 'id title desc category likes author createdAt')
+	.populate('author', 'name')
 	.then(posts => {
-		res.status(200).send(posts);
+		res.status(200).send(posts)
 	})
 	.catch(err => {
 		res.status(422).send(err.errors);
@@ -38,16 +38,9 @@ exports.index = (req, res) => {
 	Post.findOne({
 		'_id': req.params.id
 	})
+	.populate('author', 'name')
 	.then(post => {
-		User.findOne({
-			'_id': post.authorId
-		})
-		.then(user => {
-			res.status(200).send({post, user});
-		})
-		.catch(err => {
-			res.status(422).send(err.errors);
-		});		
+		res.status(200).send(post);
 	})
 	.catch(err => {
 		res.status(422).send(err.errors);
@@ -61,7 +54,7 @@ exports.createComment = (req, res) => {
 		$push: {
 			comments: {
 				"text": req.body.text,
-				"userId": req.decoded.uid,
+				"user": req.decoded.uid,
 				"createdAt": Date.now()
 			}
 		}
@@ -78,24 +71,9 @@ exports.comment = (req, res) => {
 	Post.findOne({
 		'_id': req.params.id
 	}, 'comments')
+	.populate('comments.user', 'name')
 	.then(data => {
-		var commentsCopy = data.comments
-		userList = []
-		for(var i = 0; i < commentsCopy.length; i++){
-			userList.push(commentsCopy[i].userId)
-		}
-		User.find({
-			'_id': { $in : userList}
-		}, 'name')
-		.then(users => {
-			for(var j = 0; j < commentsCopy.length; j++){
-				commentsCopy[j]['author'] = users.find(user => user._id == commentsCopy[j].userId)
-			}
-			res.status(200).send(commentsCopy);
-		})
-		.catch(err => {
-			res.status(422).send(err.errors);
-		});		
+		res.status(200).send(data);		
 	})
 	.catch(err => {
 		res.status(422).send(err.errors);
@@ -108,7 +86,7 @@ exports.like = (req, res) => {
 	},{
 		$push: {
 			likes: {
-				"userId": req.decoded.uid,
+				"user": req.decoded.uid,
 				"createdAt": Date.now()
 			}
 		}
@@ -127,7 +105,7 @@ exports.unlike = (req, res) => {
 	},{
 		$pull: {
 			likes: {
-				"userId": req.decoded.uid,
+				"user": req.decoded.uid,
 			}
 		}
 	})
@@ -143,24 +121,9 @@ exports.likeList = (req, res) => {
 	Post.findOne({
 		'_id': req.params.id
 	}, 'likes')
+	.populate('likes.user', 'name')
 	.then(data => {
-		var likesCopy = data.likes
-		userList = []
-		for(var i = 0; i < likesCopy.length; i++){
-			userList.push(likesCopy[i].userId)
-		}
-		User.find({
-			'_id': { $in : userList}
-		}, 'name')
-		.then(users => {
-			for(var j = 0; j < likesCopy.length; j++){
-				likesCopy[j]['author'] = users[j]
-			}
-			res.status(200).send(likesCopy);
-		})
-		.catch(err => {
-			res.status(422).send(err.errors);
-		});		
+		res.status(200).send(data);		
 	})
 	.catch(err => {
 		res.status(422).send(err.errors);

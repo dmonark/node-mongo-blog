@@ -1,6 +1,34 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var CommentSchema = new Schema({
+	user: { 
+		type: Schema.Types.ObjectId, 
+		ref: 'User' 
+	},
+	text: { 
+		type: String, 
+		require: true, 
+		trim: true, 
+		max: 200 
+	},
+	createdAt: { 
+		type: String, 
+		require: true
+	}
+})
+
+var LikeSchema = new Schema({
+	user: { 
+		type: Schema.Types.ObjectId, 
+		ref: 'User' 
+	},
+	createdAt: { 
+		type: String, 
+		require: true
+	}
+})
+
 var PostSchema = new Schema({
 	title: {
 		type: String,
@@ -27,18 +55,16 @@ var PostSchema = new Schema({
 		trim: true,
 		max: 240
 	},
-	authorId: {
-		type: String,
-		require: true,
-		trim: true,
-		max: 200,
+	author: { 
+		type: Schema.Types.ObjectId, 
+		ref: 'User' 
 	},
 	comments: {
-		type: Array,
+		type: [CommentSchema],
 		default: []
 	},
 	likes: {
-		type: Array,
+		type: [LikeSchema],
 		default: []
 	}
 });
