@@ -47,6 +47,19 @@ exports.index = (req, res) => {
 	});
 };
 
+exports.deleteBlog = (req, res) => {
+	Post.findOneAndDelete({
+		'_id': req.params.id,
+		'author': req.decoded.uid
+	})
+	.then(post => {
+		res.status(200).send(post);
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+};
+
 exports.createComment = (req, res) => {
 	Post.update({
 		'_id': req.params.id
@@ -61,6 +74,25 @@ exports.createComment = (req, res) => {
 	})
 	.then(post => {
 		res.status(201).send(post);
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+};
+
+exports.deleteComment = (req, res) => {
+	Post.update({
+		'_id': req.params.id
+	},{
+		$pull: {
+			comments: {
+				'_id': req.params.commentID,
+				'user': req.decoded.uid
+			}
+		}
+	})
+	.then(comment => {
+		res.status(200).send(comment);
 	})
 	.catch(err => {
 		res.status(422).send(err.errors);

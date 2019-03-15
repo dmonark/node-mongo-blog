@@ -14,11 +14,12 @@ module.exports = (app) => {
 	app.post('/api/blog', authChecker.checkToken, blogController.create);
 	app.get('/api/blog', blogController.list);
 	app.get('/api/blog/:id', blogController.index);
+	app.delete('/api/blog/:id', authChecker.checkToken, blogController.deleteBlog);
 	
 	//comment
 	app.post('/api/blog/:id/comment', authChecker.checkToken, blogController.createComment);
 	app.get('/api/blog/:id/comment', blogController.comment);
-	
+	app.delete('/api/blog/:id/comment/:commentID', authChecker.checkToken, blogController.deleteComment)
 	//likes
 	app.post('/api/blog/:id/like', authChecker.checkToken, blogController.like);
 	app.post('/api/blog/:id/unlike', authChecker.checkToken, blogController.unlike);
