@@ -16,6 +16,41 @@ exports.create = (req, res) => {
 	});
 };
 
+exports.update = (req, res) => {
+	User.updateOne({
+		_id: req.decoded.uid
+	},{
+		name: req.body.name,
+		bio: req.body.bio
+	})
+	.then(user => {
+		res.status(200).send(user)
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+}
+
+exports.changePassword = (req, res) => {
+	User.updateOne({
+		_id: req.decoded.uid,
+		password: req.body.oldPassword
+	},{
+		password: req.body.newPassword
+	})
+	.then(user => {
+		if(user.nModified === 1)
+			res.status(200).send(user);
+		else
+			res.status(422).send({
+				message: "User Not Found"
+			});
+	})
+	.catch(err => {
+		res.status(422).send(err.errors);
+	});
+}
+
 exports.login = (req, res) => {
 	User.findOne({
 		email: req.body.email,
