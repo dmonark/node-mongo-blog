@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 exports.create = (req, res) => {
 	User.create({
-		username: req.body.username,
 		email: req.body.email,
 		name: req.body.name,
 		password: req.body.password,
@@ -50,7 +49,7 @@ exports.login = (req, res) => {
 
 exports.list = (req, res) => {
 	
-	User.find({}, 'name id')
+	User.find({}, 'name id bio')
 	.then(users => {
 		res.status(200).send(users);
 	})
