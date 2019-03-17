@@ -13,8 +13,8 @@ var CommentSchema = new Schema({
 		max: 200 
 	},
 	createdAt: { 
-		type: String, 
-		require: true
+		type: Date, 
+		default: Date.now
 	}
 })
 
@@ -24,8 +24,8 @@ var LikeSchema = new Schema({
 		ref: 'User' 
 	},
 	createdAt: { 
-		type: String, 
-		require: true
+		type: Date, 
+		default: Date.now
 	}
 })
 
@@ -43,10 +43,8 @@ var PostSchema = new Schema({
 		max: 2000
 	},
 	createdAt: {
-		type: String,
-		require: true, 
-		trim: true,
-		max: 100
+		type: Date, 
+		default: Date.now
 	},
 	category: {
 		type: String,

@@ -6,8 +6,7 @@ exports.create = (req, res) => {
 		title: req.body.title,
 		desc: req.body.desc,
 		category: req.body.category,
-		author: req.decoded.uid,
-		createdAt: Date.now()
+		author: req.decoded.uid
 	})
 	.then(post => {
 		res.status(201).send(post);
@@ -67,8 +66,7 @@ exports.createComment = (req, res) => {
 		$push: {
 			comments: {
 				"text": req.body.text,
-				"user": req.decoded.uid,
-				"createdAt": Date.now()
+				"user": req.decoded.uid
 			}
 		}
 	})
@@ -118,8 +116,7 @@ exports.like = (req, res) => {
 	},{
 		$push: {
 			likes: {
-				"user": req.decoded.uid,
-				"createdAt": Date.now()
+				"user": req.decoded.uid
 			}
 		}
 	})

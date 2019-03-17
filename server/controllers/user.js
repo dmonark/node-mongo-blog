@@ -83,7 +83,6 @@ exports.login = (req, res) => {
 };
 
 exports.list = (req, res) => {
-	
 	User.find({}, 'name id bio')
 	.then(users => {
 		res.status(200).send(users);
