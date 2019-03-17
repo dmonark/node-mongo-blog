@@ -1,14 +1,21 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const http = require('http');
+"use strict";
 
-const app = express();
+var express = require('express');
 
-// Set up mongoose connection
-var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
+
+var http = require('http');
+
+var cors = require('cors');
+
+var app = express(); 
+
+var mongoose = require('mongoose'); // Set up mongoose connection
+
 var dev_db_url = 'mongodb+srv://factly:qWOH9xRuWuDtt6zA@cluster0-qdjtw.mongodb.net/test?retryWrites=true';
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
-mongoose.connect(mongoDB);
+mongoose.connect(mongoDB, {useNewUrlParser: true});
+mongoose.set('useCreateIndex', true);
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -18,15 +25,24 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-require('./server/routes')(app);
-app.get('*', (req, res) => res.status(404).send({
-  message: 'Not found.',
+app.use(cors({
+  origin: '*',
+	exposedHeaders: ['x-token', 'Content-Length']
 }));
 
-const port = parseInt(process.env.PORT, 10) || 8000;
+require('./server/routes')(app);
+app.get('*', function (req, res) {
+  return res.status(404).send({
+    message: 'Not found.'
+  });
+});
+
+var port = parseInt(process.env.PORT, 10) || 8000;
 app.set('port', port);
 
-const server = http.createServer(app);
-server.listen(port, () => {
-	console.log(`The server is running at localhost:${port}`);
+var server = http.createServer(app);
+server.listen(port, function () {
+  console.log("The server is running at localhost:".concat(port));
 });
+
+module.exports = server;

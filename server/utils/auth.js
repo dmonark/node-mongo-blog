@@ -1,15 +1,18 @@
-let jwt = require('jsonwebtoken');
+"use strict";
 
-let checkToken = (req, res, next) => {
-  let token = req.headers['x-token'];
-	if (token) {
-    jwt.verify(token, 'secret', (err, decoded) => {
+var jwt = require('jsonwebtoken');
+
+var checkToken = function checkToken(req, res, next) {
+  var token = req.headers['x-token'];
+
+  if (token) { //checking the token
+    jwt.verify(token, 'secret', function (err, decoded) { //decoding the token
       if (err) {
         return res.status(401).send({
           message: 'Auth Token is not valid'
         });
       } else {
-        req.decoded = decoded;
+        req.decoded = decoded; //setting up the key in req
         next();
       }
     });
@@ -22,4 +25,4 @@ let checkToken = (req, res, next) => {
 
 module.exports = {
   checkToken: checkToken
-}
+};

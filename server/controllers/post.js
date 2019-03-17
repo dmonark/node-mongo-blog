@@ -1,160 +1,151 @@
-const Post = require('../models/post');
-const User = require('../models/user');
+"use strict";
 
-exports.create = (req, res) => {
-	Post.create({
-		title: req.body.title,
-		desc: req.body.desc,
-		category: req.body.category,
-		author: req.decoded.uid
-	})
-	.then(post => {
-		res.status(201).send(post);
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+var Post = require('../models/post');
+
+var User = require('../models/user');
+
+exports.create = function (req, res) {
+  Post.create({
+    title: req.body.title,
+    desc: req.body.desc,
+    category: req.body.category,
+    author: req.decoded.uid
+  })
+	.then(function (post) {
+    res.status(201).send(post);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
 
-exports.list = (req, res) => {
-	var filterList = {}
-	if(req.query.category)
-		filterList['category'] = req.query.category
-	if(req.query.author)
-		filterList['author'] = req.query.author
-	
-	Post.find(filterList, 'id title desc category likes author createdAt')
+exports.list = function (req, res) {
+  var filterList = {};
+  if (req.query.category) filterList['category'] = req.query.category;
+  if (req.query.author) filterList['author'] = req.query.author;
+  Post.find(filterList, 'id title desc category likes author createdAt')
+	.sort({createdAt: -1})
 	.populate('author', 'name')
-	.then(posts => {
-		res.status(200).send(posts)
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+	.then(function (posts) {
+    res.status(200).send(posts);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
 
-exports.index = (req, res) => {
-	Post.findOne({
-		'_id': req.params.id
-	})
-	.populate('author', 'name')
-	.then(post => {
-		res.status(200).send(post);
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+exports.index = function (req, res) {
+  Post.findOne({
+    '_id': req.params.id
+  }).populate('author', 'name')
+	.then(function (post) {
+    res.status(200).send(post);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
 
-exports.deleteBlog = (req, res) => {
-	Post.findOneAndDelete({
-		'_id': req.params.id,
-		'author': req.decoded.uid
-	})
-	.then(post => {
-		res.status(200).send(post);
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+exports.deleteBlog = function (req, res) {
+  Post.findOneAndDelete({
+    '_id': req.params.id,
+    'author': req.decoded.uid
+  }).then(function (post) {
+    res.status(200).send(post);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
 
-exports.createComment = (req, res) => {
-	Post.update({
-		'_id': req.params.id
-	},{
-		$push: {
-			comments: {
-				"text": req.body.text,
-				"user": req.decoded.uid
-			}
-		}
+exports.createComment = function (req, res) {
+  Post.findOneAndUpdate({
+    '_id': req.params.id
+  }, {
+    $push: {
+      comments: {
+        "text": req.body.text,
+        "user": req.decoded.uid
+      }
+    }
+  },{
+		new: true
 	})
-	.then(post => {
-		res.status(201).send(post);
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
-};
-
-exports.deleteComment = (req, res) => {
-	Post.update({
-		'_id': req.params.id
-	},{
-		$pull: {
-			comments: {
-				'_id': req.params.commentID,
-				'user': req.decoded.uid
-			}
-		}
-	})
-	.then(comment => {
-		res.status(200).send(comment);
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
-};
-
-exports.comment = (req, res) => {
-	Post.findOne({
-		'_id': req.params.id
-	}, 'comments')
 	.populate('comments.user', 'name')
-	.then(data => {
-		res.status(200).send(data);		
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+	.then(function (post) {
+    res.status(201).send(post);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
 
-exports.like = (req, res) => {
-	Post.update({
-		'_id': req.params.id
-	},{
-		$push: {
-			likes: {
-				"user": req.decoded.uid
-			}
-		}
+exports.deleteComment = function (req, res) {
+  Post.findOneAndUpdate({
+    '_id': req.params.id
+  }, {
+    $pull: {
+      comments: {
+        '_id': req.params.commentID,
+        'user': req.decoded.uid
+      }
+    }
+  },{
+		new: true
 	})
-	.then(like => {
-		res.status(201).send(like);
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+	.populate('comments.user', 'name')
+	.then(function (comment) {
+    res.status(200).send(comment);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
 
-exports.unlike = (req, res) => {
-	Post.update({
-		'_id': req.params.id
-	},{
-		$pull: {
-			likes: {
-				"user": req.decoded.uid,
-			}
-		}
-	})
-	.then(like => {
-		res.status(200).send(like);
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+exports.comment = function (req, res) {
+  Post.findOne({
+    '_id': req.params.id
+  }, 'comments')
+	.populate('comments.user', 'name')
+	.then(function (data) {
+    res.status(200).send(data);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
 
-exports.likeList = (req, res) => {
-	Post.findOne({
-		'_id': req.params.id
-	}, 'likes')
-	.populate('likes.user', 'name')
-	.then(data => {
-		res.status(200).send(data);		
-	})
-	.catch(err => {
-		res.status(422).send(err.errors);
-	});
+exports.like = function (req, res) {
+  Post.updateOne({
+    '_id': req.params.id
+  }, {
+    $push: {
+      likes: {
+        "user": req.decoded.uid
+      }
+    }
+  }).then(function (like) {
+    res.status(201).send(like);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
+};
+
+exports.unlike = function (req, res) {
+  Post.updateOne({
+    '_id': req.params.id
+  }, {
+    $pull: {
+      likes: {
+        "user": req.decoded.uid
+      }
+    }
+  }).then(function (like) {
+    res.status(200).send(like);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
+};
+
+exports.likeList = function (req, res) {
+  Post.findOne({
+    '_id': req.params.id
+  }, 'likes').populate('likes.user', 'name').then(function (data) {
+    res.status(200).send(data);
+  }).catch(function (err) {
+    res.status(422).send(err.errors);
+  });
 };
