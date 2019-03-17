@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.App {
+	padding: 0;
+	margin: 0;
+  text-align: center;
+}
+.container {
+	padding: 16px;
+}
+.blog-card{
+	text-align: left;
+}
+.nav-root {
+	flex: 1;
+	box-sizing: inherit;
+}
+.nav-heading {
+	flex: 1;
+	text-align: left;
+}
+#login-model {
+	width: 500px;
+}
+#login-btn {
+	margin-top: 16px;
+	margin-bottom: 8px
+}
+.filter-margin{
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+.each-blog{
+	margin-bottom: 16px;
+}
+.user-avatar{
+	width: 100;
+  height: 100;
+	background-color: orange;
+}
+.text-left{
+	text-align: left;
+}

@@ -8,6 +8,8 @@ var http = require('http');
 
 var cors = require('cors');
 
+var path = require('path');
+
 var app = express(); 
 
 var mongoose = require('mongoose'); // Set up mongoose connection
@@ -31,10 +33,16 @@ app.use(cors({
 }));
 
 require('./server/routes')(app);
-app.get('*', function (req, res) {
+/*app.get('*', function (req, res) {
   return res.status(404).send({
     message: 'Not found.'
   });
+});
+*/
+app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 var port = parseInt(process.env.PORT, 10) || 8000;
